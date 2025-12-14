@@ -1,0 +1,489 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width,initial-scale=1" />
+    <title>ANIME DIIB</title>
+    <meta name="description" content="ANIME DIIB تطبيق مشاهدة أنمي: واجهة خفيفة، ميزات ذكي. حمل التطبيق مباشرة." />
+    <meta property="og:title" content="ANIME DIIB" />
+    <meta property="og:description" content="تطبيق لمشاهدة مسلسلات الانمي — حمّله الآن." />
+    <meta property="og:type" content="website" />
+    <link rel="stylesheet" href="css/style.css" />
+    <link rel="icon" href="assets/icons/favicon.svg" />
+    <meta name="theme-color" content="#071021" />
+    <link rel="manifest" href="manifest.json" />
+    <script type="application/ld+json">
+    {
+        "@context": "http://schema.org",
+        "@type": "SoftwareApplication",
+        "name": "ANIME DIIB",
+        "url": "./",
+        "applicationCategory": "Entertainment",
+        "operatingSystem": "Android",
+        "offers": {"@type": "Offer","price":"0","url":"downloads/ANIME_DIIB.apk"}
+    }
+    </script>
+</head>
+<body>
+    <header class="site-header" role="banner">
+        <div class="container header-inner">
+                <div class="brand" aria-hidden="false">
+                <img src="assets/images/logo.png" alt="شعار ANIME DIIB" class="logo" width="56" height="56" />
+                <div>
+                    <strong class="app-name gradient-text">ANIME DIIB</strong>
+                    <div class="tag">تطبيق مشاهدة الأنمي — مسلسلات وافلام انمي</div>
+                </div>
+            </div>
+            <!-- Compact aggregated rating displayed in header (read-only) -->
+            <div class="header-rating" id="header-rating" aria-hidden="false" title="متوسط تقييم التطبيق">
+                <div class="hdr-rating-average" id="hdr-rating-average">0.0</div>
+                <div class="hdr-rating-stars" id="hdr-rating-stars">☆☆☆☆☆</div>
+            </div>
+            <nav class="nav" role="navigation" aria-label="القوائم الرئيسية">
+                <a class="nav-link" href="contact.html">تواصل</a>
+                <button id="download-nav" class="btn btn-ghost" data-href="downloads/ANIME_DIIB.apk" aria-label="تحميل ANIME DIIB من الهيدر">تحميل</button>
+                <!-- Header compact progress (hidden until active) -->
+                <div id="header-download-progress" class="header-progress-wrap visually-hidden" aria-hidden="true">
+                    <div class="header-progress-bar" role="progressbar" aria-valuemin="0" aria-valuemax="100" style="width:0%"></div>
+                    <div class="header-progress-label">0%</div>
+                </div>
+            </nav>
+        </div>
+    </header>
+
+    <main role="main">
+        <section class="hero">
+            <div class="container hero-grid">
+                <div class="hero-body">
+                      <h1 class="gradient-text">ANIME DIIB</h1>
+                    <p class="lead">هو تطبيق تواصل ومشاهدة الانمي — تجربة مثيرةّ،مع مفاجأت اخرى داخل التطبيق .</p>
+                    <div class="hero-ctas">
+                        <button id="download" class="btn btn-primary" data-href="downloads/ANIME_DIIB.apk" aria-label="تحميل تطبيق ANIME DIIB الآن">تحميل الآن</button>
+                        <!-- send-link removed per request -->
+                        <button id="pwa-install" class="btn btn-outline visually-hidden" aria-hidden="true">تثبيت التطبيق</button>
+                        <a class="btn btn-outline" href="#features" aria-label="اطلع على مزايا التطبيق">المزايا</a>
+                                                <div id="not-android" class="visually-hidden" aria-hidden="true" style="margin-top:8px;color:var(--muted)">هذا التطبيق مخصّص لأجهزة أندرويد — قد تحتاج للسماح بتثبيت التطبيقات من مصادر غير معروفة بعد التحميل.</div>
+                                                <div id="download-progress" class="progress-wrap visually-hidden" aria-hidden="true">
+                                                    <div class="progress-bar" role="progressbar" aria-valuemin="0" aria-valuemax="100" style="width:0%"></div>
+                                                    <div class="progress-label">0%</div>
+                                                </div>
+                    </div>
+                                        <ul class="quick-features">
+                                                <li>خفيف على الجهاز</li>
+                                                <li>دعم RTL وواجهة عربية</li>
+                                                <li>تحديثات تلقائية</li>
+                                                <li>تواصل مع مجتمع التطبيق </li>
+                                        </ul>
+
+                                        <!-- Rating block (fixed position under hero) -->
+                                        <div id="rating-block" class="rating-block">
+                                            <div class="rating-display">
+                                                <div class="rating-average" id="rating-average">0.0</div>
+                                                <div class="rating-stars" id="rating-stars">★★★★★</div>
+                                            </div>
+                                            <div class="rating-actions">
+                                                <div class="rating-prompt">قيّم التطبيق:</div>
+                                                <div class="rating-input" id="rating-input">
+                                                    <button class="star-btn" data-value="1" aria-label="1 نجمة">☆</button>
+                                                    <button class="star-btn" data-value="2" aria-label="2 نجمتين">☆</button>
+                                                    <button class="star-btn" data-value="3" aria-label="3 نجوم">☆</button>
+                                                    <button class="star-btn" data-value="4" aria-label="4 نجوم">☆</button>
+                                                    <button class="star-btn" data-value="5" aria-label="5 نجوم">☆</button>
+                                                </div>
+                                                <div class="rating-summary small muted" id="rating-count">لم يتم التقييم بعد</div>
+                                            </div>
+                                        </div>
+                </div>
+                <div class="hero-media">
+                    <img src="assets/images/screen1.jpg" alt="امثل على الانميات الموجودة داخل التطبيق  ANIME DIIB" loading="eager" width="360" height="720" />
+                </div>
+            </div>
+        </section>
+
+        <section id="features" class="container features" aria-labelledby="features-title">
+            <h2 id="features-title">مزايا التطبيق</h2>
+            <div class="features-grid">
+                <article class="feature">
+                    <div class="icon">📺</div>
+                    <h3>واجهة عرض أنيقة</h3>
+                    <p>قوائم انيقة وتصنيف واضح للحلقات والموسم.</p>
+                </article>
+                <article class="feature">
+                    <div class="icon">⚡</div>
+                    <h3>أداء سريع</h3>
+                    <p>تم تصميم التطبيق ليعمل بخفة على جميع اجهزة الاندرويد.</p>
+                </article>
+                <article class="feature">
+                    <div class="icon">🔔</div>
+                    <h3>إشعارات</h3>
+                    <p>تنبيهات عند صدور حلقات جديدة للمسلسلات المفضلة.</p>
+                </article>
+                <article class="feature">
+                    <div class="icon">💬</div>
+                    <h3>تواصل</h3>
+                    <p>امكانية التواصل مع محبي عالم الاوتاكو داخل التطبيق.</p>
+                </article>
+            </div>
+        </section>
+
+        <section class="container screenshots" aria-labelledby="screens-title">
+            <h2 id="screens-title">بعض الانميات الموجودة</h2>
+            <div class="screens-grid">
+                <img src="assets/images/screen1.jpg" alt="الانمي 1" loading="lazy" />
+                <img src="assets/images/screen2.jpg" alt="الانمي 2" loading="lazy" />
+                <img src="assets/images/screen3.jpg" alt="الانمي 3" loading="lazy" />
+            </div>
+        </section>
+
+        <section class="container cta-band" aria-labelledby="cta-title">
+            <h3 id="cta-title" class="visually-hidden">دعوة للتحميل</h3>
+                    <div class="cta-inner">
+                    <div>
+                        <h3>جاهز للتجربة؟</h3>
+                        <p>حمّل ANIME DIIB الآن وابدأ متابعة مسلسلاتك المفضلة.</p>
+                    </div>
+                    <div style="display:flex;gap:12px;align-items:center">
+                        <button id="download-cta" class="btn btn-primary" data-href="downloads/ANIME_DIIB.apk">تحميل</button>
+                        <a class="btn btn-outline" href="#features">المزايا</a>
+                    </div>
+                </div>
+        </section>
+    </main>
+
+    <footer class="site-footer" role="contentinfo">
+        <div class="container footer-inner">
+            <div class="footer-left">© <span id="year"></span> <span class="gradient-text footer-brand">ANIME DIIB</span></div>
+            <div class="footer-right">
+                <nav class="footer-links" aria-label="روابط تكميلية">
+                    <a href="contact.html">تواصل</a>
+                    <a href="privacy.html">سياسة الخصوصية</a>
+                </nav>
+                <div class="footer-note">إصدار تجريبي — استبدل ملف التحميل بالنسخة النهائية عند توفرها</div>
+            </div>
+        </div>
+    </footer>
+
+    <script>
+        document.getElementById('year').textContent = new Date().getFullYear();
+    </script>
+        <script>
+            // Download with progress (fetch stream) and trigger browser download
+            (function(){
+                async function downloadWithProgress(url, onProgress){
+                    const resp = await fetch(url);
+                    if(!resp.ok) throw new Error('Network response was not ok');
+                    const contentLength = resp.headers.get('Content-Length') || resp.headers.get('content-length');
+                    const total = contentLength ? parseInt(contentLength,10) : null;
+                    const reader = resp.body.getReader();
+                    const chunks = [];
+                    let received = 0;
+
+                    while(true){
+                        const {done, value} = await reader.read();
+                        if(done) break;
+                        chunks.push(value);
+                        received += value.length;
+                        if(total && onProgress) onProgress(received / total);
+                        else if(onProgress) onProgress(null);
+                    }
+
+                    // build blob
+                    const blob = new Blob(chunks, {type: resp.headers.get('Content-Type') || 'application/octet-stream'});
+                    return blob;
+                }
+
+                function startDownload(url, progressEl){
+                    const isAndroid = /Android/i.test(navigator.userAgent || navigator.platform);
+
+                    // If this is an APK and we're on Android, prefer letting the browser handle the download
+                    // directly (avoids blob URL issues that can block installation on some Android browsers).
+                    if(isAndroid && /\.apk($|\?)/i.test(url)){
+                        // show small feedback in progress elements
+                        const hdr = document.getElementById('header-download-progress');
+                        const main = document.getElementById('download-progress');
+                        const targets = [progressEl, hdr, main].filter(Boolean);
+                        targets.forEach(t=>{ t.classList.remove('visually-hidden'); t.setAttribute('aria-hidden','false'); const lbl = t.querySelector('.progress-label, .header-progress-label'); if(lbl) lbl.textContent='جاري التحميل...'; });
+                        try{
+                            // Use location.assign to start the browser download flow
+                            window.location.assign(url);
+                        }catch(e){
+                            console.error('Direct navigation failed, falling back to programmatic download', e);
+                            // fallback to programmatic fetch-based download
+                        }
+                        return;
+                    }
+
+                    // collect all progress elements we want to sync
+                    const hdr = document.getElementById('header-download-progress');
+                    const main = document.getElementById('download-progress');
+                    const targets = [];
+                    if(progressEl) targets.push(progressEl);
+                    if(hdr && targets.indexOf(hdr) === -1) targets.push(hdr);
+                    if(main && targets.indexOf(main) === -1) targets.push(main);
+
+                    // Prepare UI for each target
+                    const ui = targets.map(t=>{
+                        const bar = t.querySelector('.progress-bar') || t.querySelector('.header-progress-bar');
+                        const label = t.querySelector('.progress-label') || t.querySelector('.header-progress-label');
+                        t.classList.remove('visually-hidden');
+                        t.setAttribute('aria-hidden','false');
+                        if(label) label.textContent = '0%';
+                        if(bar) { bar.style.width = '0%'; bar.classList.remove('indeterminate'); bar.setAttribute('aria-valuenow','0'); }
+                        return {wrap: t, bar, label};
+                    });
+
+                    let lastPct = 0;
+
+                    downloadWithProgress(url, (ratio)=>{
+                        if(ratio === null){
+                            // unknown size: show indeterminate animation
+                            ui.forEach(u=>{
+                                if(u.label) u.label.textContent = 'جاري التحميل...';
+                                if(u.bar) u.bar.classList.add('indeterminate');
+                            });
+                        } else {
+                            const pct = Math.floor(ratio * 100);
+                            // only update when changed to reduce layout thrash
+                            if(pct !== lastPct){
+                                lastPct = pct;
+                                ui.forEach(u=>{
+                                    if(u.bar){ u.bar.classList.remove('indeterminate'); u.bar.style.width = pct + '%'; u.bar.setAttribute('aria-valuenow', String(pct)); }
+                                    if(u.label) u.label.textContent = pct + '%';
+                                });
+                            }
+                        }
+                    }).then(blob=>{
+                        // trigger download
+                        const a = document.createElement('a');
+                        const u = URL.createObjectURL(blob);
+                        a.href = u;
+                        a.download = url.split('/').pop();
+                        document.body.appendChild(a);
+                        a.click();
+                        a.remove();
+                        URL.revokeObjectURL(u);
+                        // hide progress after short delay
+                        setTimeout(()=>{
+                            ui.forEach(u=>{
+                                u.wrap.classList.add('visually-hidden');
+                                u.wrap.setAttribute('aria-hidden','true');
+                                if(u.bar){ u.bar.style.width='0%'; u.bar.setAttribute('aria-valuenow','0'); }
+                                if(u.label) u.label.textContent = '0%';
+                            });
+                        },1400);
+                    }).catch(err=>{
+                        // better error UX than alert
+                        try{ ui.forEach(u=>{ if(u.label) u.label.textContent = 'فشل التحميل'; }); }catch(e){}
+                        console.error('Download error', err);
+                        ui.forEach(u=>{ u.wrap.classList.add('visually-hidden'); u.wrap.setAttribute('aria-hidden','true'); });
+                    });
+                }
+
+                // expose startDownload for other scripts (modal, header button)
+                window.downloadWithProgress = downloadWithProgress;
+                window.startDownload = startDownload;
+
+                // wire buttons that have a data-href attribute (header, CTAs)
+                const progressWrap = document.getElementById('download-progress');
+                const headerProgress = document.getElementById('header-download-progress');
+                const downloadEls = document.querySelectorAll('[data-href]');
+                downloadEls.forEach(btn=>{
+                    if(!btn) return;
+                    btn.addEventListener('click', (e)=>{
+                        e.preventDefault();
+                        const url = btn.dataset.href || btn.getAttribute('data-href') || btn.getAttribute('href');
+                        if(!url) return alert('رابط التحميل غير موجود');
+
+                        // Prefer explicit data-progress-target, else choose header progress for header, else main progress
+                        let progressEl = null;
+                        if(btn.dataset.progressTarget){
+                            progressEl = document.querySelector(btn.dataset.progressTarget);
+                        } else if(btn.id === 'download-nav' || btn.closest('.site-header')){
+                            progressEl = headerProgress || progressWrap;
+                        } else {
+                            progressEl = progressWrap;
+                        }
+
+                        startDownload(url, progressEl);
+                    });
+                });
+            })();
+        </script>
+
+        <script>
+                // Rating widget (uses the static `#rating-block` in the hero)
+            (function(){
+                const key = 'anime-diib-rating';
+                const userKey = 'anime-diib-user-rating';
+
+                function readStore(){ try{ return JSON.parse(localStorage.getItem(key)) || {sum:0,count:0}; } catch(e){ return {sum:0,count:0}; } }
+                function writeStore(v){ localStorage.setItem(key, JSON.stringify(v)); }
+                function readUser(){ return parseInt(localStorage.getItem(userKey),10) || 0; }
+                function writeUser(v){ localStorage.setItem(userKey, String(v)); }
+
+                const block = document.getElementById('rating-block');
+                if(!block) return;
+                const avgEl = block.querySelector('#rating-average');
+                const starsText = block.querySelector('#rating-stars');
+                const inputWrap = block.querySelector('#rating-input');
+                const countEl = block.querySelector('#rating-count');
+
+                // header display elements (may be absent on very small screens)
+                const hdrAvg = document.getElementById('hdr-rating-average');
+                const hdrStars = document.getElementById('hdr-rating-stars');
+
+                function render(){
+                    const store = readStore();
+                    const avg = store.count ? (store.sum / store.count) : 0;
+                    const avgText = store.count ? (Math.round(avg*10)/10) : '0.0';
+                    avgEl.textContent = avgText;
+                    // update header if present
+                    if(hdrAvg) hdrAvg.textContent = avgText;
+
+                    // stars textual display (rounded)
+                    const rounded = Math.round(avg);
+                    const stars = Array.from({length:5}).map((_,i)=> i < rounded ? '★' : '☆').join('');
+                    starsText.textContent = stars;
+                    if(hdrStars) hdrStars.textContent = stars;
+
+                    countEl.textContent = store.count ? (store.count + ' تقييم') : 'لم يتم التقييم بعد';
+                    // mark user selection
+                    const user = readUser();
+                    const btns = inputWrap.querySelectorAll('.star-btn');
+                    btns.forEach(b=>{ const v = parseInt(b.dataset.value,10); b.textContent = (user && v <= user) ? '★' : '☆'; });
+                }
+
+                inputWrap.addEventListener('click', (e)=>{
+                    const btn = e.target.closest('.star-btn');
+                    if(!btn) return;
+                    const v = parseInt(btn.dataset.value,10);
+                    const store = readStore();
+                    const prev = readUser();
+
+                    if(prev && prev > 0){
+                        // user is updating their previous rating: adjust sum but do not change count
+                        store.sum = Math.max(0, (store.sum - prev) + v);
+                        // feedback briefly
+                        countEl.textContent = 'تم تحديث تقييمك — ' + (store.count ? (store.count + ' تقييم') : '');
+                    } else {
+                        // new rating
+                        store.sum += v;
+                        store.count += 1;
+                        countEl.textContent = store.count + ' تقييم';
+                    }
+
+                    writeStore(store);
+                    writeUser(v);
+                    render();
+                });
+
+                // initial render
+                render();
+            })();
+        </script>
+        <script>
+            (function(){
+                const isAndroid = /Android/i.test(navigator.userAgent || navigator.platform);
+                const downloadEls = document.querySelectorAll('[data-href$=".apk"], a[href$=".apk"], a.android-only');
+                const pwaBtn = document.getElementById('pwa-install');
+                const notAndroidEl = document.getElementById('not-android');
+
+                // register service worker for PWA
+                if('serviceWorker' in navigator){
+                    navigator.serviceWorker.register('sw.js').catch(()=>{});
+                }
+
+                // Intercept APK downloads: if not Android, show a friendly notice asking user to open on Android
+                downloadEls.forEach(el=>{
+                    el.addEventListener('click', (ev)=>{
+                        const href = el.dataset && el.dataset.href ? el.dataset.href : el.getAttribute('href');
+                        if(!isAndroid){
+                            ev.preventDefault();
+                            if(notAndroidEl){
+                                notAndroidEl.classList.remove('visually-hidden');
+                                notAndroidEl.setAttribute('aria-hidden','false');
+                                notAndroidEl.scrollIntoView({behavior:'smooth', block:'center'});
+                            } else {
+                                alert('الرجاء فتح الموقع على جهاز أندرويد لتنزيل التطبيق.');
+                            }
+                        }
+                    });
+                });
+
+                // PWA install handling: show install prompt on Android; otherwise show notice
+                let deferredPrompt;
+                window.addEventListener('beforeinstallprompt', (e)=>{
+                    e.preventDefault();
+                    deferredPrompt = e;
+                    if(pwaBtn){
+                        pwaBtn.classList.remove('visually-hidden');
+                        pwaBtn.setAttribute('aria-hidden','false');
+                        pwaBtn.addEventListener('click', async (ev)=>{
+                            if(!isAndroid){
+                                ev.preventDefault();
+                                if(notAndroidEl){ notAndroidEl.classList.remove('visually-hidden'); notAndroidEl.setAttribute('aria-hidden','false'); }
+                                return;
+                            }
+                            if(!deferredPrompt) return;
+                            pwaBtn.setAttribute('disabled','true');
+                            deferredPrompt.prompt();
+                            await deferredPrompt.userChoice;
+                            deferredPrompt = null;
+                            pwaBtn.removeAttribute('disabled');
+                        });
+                    }
+                });
+            })();
+        </script>
+        <script>
+            (function(){
+                const sendBtn = document.getElementById('send-link');
+                const modal = document.getElementById('sendlink-modal');
+                const mailto = document.getElementById('mailto-link');
+                const showQr = document.getElementById('show-qr');
+                const qrImg = document.getElementById('qr-img');
+                const qrContainer = document.getElementById('qr-container');
+                const copyBtn = document.getElementById('copy-link');
+                const closeBtn = document.getElementById('sendlink-close');
+
+                function getDownloadUrl(){
+                    return new URL('downloads/ANIME_DIIB.apk', location.href).href;
+                }
+
+                if(sendBtn){
+                    sendBtn.addEventListener('click', ()=>{
+                        modal.classList.remove('visually-hidden');
+                        modal.setAttribute('aria-hidden','false');
+                    });
+                }
+
+                if(mailto){
+                    mailto.addEventListener('click', (e)=>{
+                        const url = getDownloadUrl();
+                        const subject = encodeURIComponent('رابط تحميل ANIME DIIB');
+                        const body = encodeURIComponent('مرحباً,%0D%0Aإليك رابط تنزيل تطبيق ANIME DIIB:%0D%0A' + url + '%0D%0A%0D%0Aتحياتي');
+                        mailto.href = `mailto:?subject=${subject}&body=${body}`;
+                    });
+                }
+
+                if(showQr){
+                    showQr.addEventListener('click', ()=>{
+                        const url = getDownloadUrl();
+                        // use public QR generator
+                        qrImg.src = 'https://api.qrserver.com/v1/create-qr-code/?size=300x300&data=' + encodeURIComponent(url);
+                        qrContainer.style.display = 'block';
+                    });
+                }
+
+                if(copyBtn){
+                    copyBtn.addEventListener('click', async ()=>{
+                        const url = getDownloadUrl();
+                        try{ await navigator.clipboard.writeText(url); copyBtn.textContent = 'تم النسخ'; setTimeout(()=>copyBtn.textContent='نسخ الرابط',2000);}catch(e){alert('نسخ فشل — انسخ الرابط يدوياً: ' + url)}
+                    });
+                }
+
+                if(closeBtn){ closeBtn.addEventListener('click', ()=>{ modal.classList.add('visually-hidden'); modal.setAttribute('aria-hidden','true'); qrContainer.style.display='none'; }); }
+            })();
+        </script>
+</body>
+</html>

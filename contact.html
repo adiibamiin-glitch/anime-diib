@@ -1,0 +1,147 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width,initial-scale=1" />
+    <title>تواصل معنا - ANIME DIIB</title>
+    <link rel="stylesheet" href="css/style.css" />
+</head>
+<body>
+    <header class="site-header">
+        <div class="container header-inner">
+            <div class="brand">
+                <img src="assets/images/logo.svg" alt="ANIME DIIB" class="logo" width="48" height="48" />
+                <div>
+                    <strong class="app-name">ANIME DIIB</strong>
+                </div>
+            </div>
+            <nav class="nav">
+                <a class="nav-link" href="index.html">الرئيسية</a>
+            </nav>
+        </div>
+    </header>
+
+    <main class="container" role="main">
+        <section class="contact-form" aria-labelledby="contact-title">
+            <h1 id="contact-title">تواصل معنا</h1>
+            <p>أرسل لنا رسالة وسنعود إليك في أقرب وقت.</p>
+            <form id="contact-form" aria-label="نموذج تواصل ANIME DIIB">
+                <label>الاسم (اختياري)
+                    <input type="text" name="name" placeholder="اسمك" />
+                </label>
+                <label>البريد الإلكتروني
+                    <input type="email" name="email" placeholder="you@example.com" required aria-required="true" />
+                </label>
+                <label>الرسالة
+                    <textarea name="message" rows="6" required placeholder="نص الرسالة" aria-required="true"></textarea>
+                </label>
+                <div style="display:flex;gap:8px;align-items:center">
+                    <button type="submit" id="contact-send" class="btn btn-primary">إرسال</button>
+                    <div id="contact-status" role="status" aria-live="polite" style="color:var(--muted);font-size:0.95rem"></div>
+                </div>
+            </form>
+        </section>
+    </main>
+
+    <footer class="site-footer">
+        <div class="container footer-inner">
+            <div>© <span id="year"></span> ANIME DIIB</div>
+        </div>
+    </footer>
+
+    <script>document.getElementById('year').textContent = new Date().getFullYear();</script>
+    <!-- Email sending: EmailJS client integration
+         Replace the placeholders below with your EmailJS user ID, service ID and template ID.
+         Setup steps (short):
+         1. Create an account at https://www.emailjs.com/ (free tier available).
+         2. Add an email "service" (e.g., Gmail SMTP or other) in the EmailJS dashboard.
+         3. Create a template and set the recipient email to adiibamiin@gmail.com (or include as template parameter).
+         4. Copy your Public Key (User ID), Service ID and Template ID and paste them into the placeholders below.
+*/ -->
+    <script src="https://cdn.emailjs.com/sdk/3.2.0/email.min.js"></script>
+    <script>
+        (function(){
+            // TODO: replace these values with your EmailJS credentials
+            const EMAILJS_USER_ID = 'REPLACE_WITH_YOUR_EMAILJS_USER_ID';
+            const EMAILJS_SERVICE_ID = 'REPLACE_WITH_YOUR_SERVICE_ID';
+            const EMAILJS_TEMPLATE_ID = 'REPLACE_WITH_YOUR_TEMPLATE_ID';
+
+            // init EmailJS (public key)
+            if(window.emailjs && EMAILJS_USER_ID.indexOf('REPLACE_') === -1){
+                emailjs.init(EMAILJS_USER_ID);
+            }
+
+            const form = document.getElementById('contact-form');
+            const status = document.getElementById('contact-status');
+            const sendBtn = document.getElementById('contact-send');
+
+            if(!form) return;
+
+            form.addEventListener('submit', function(e){
+                e.preventDefault();
+                status.textContent = '';
+                if(EMAILJS_USER_ID.indexOf('REPLACE_') === 0){
+                    // fallback: open mailto if EmailJS not configured
+                    const data = new FormData(form);
+                    const name = data.get('name') || '';
+                    const email = data.get('email') || '';
+                    const message = data.get('message') || '';
+                    const subject = encodeURIComponent('رسالة من صفحة التواصل - ANIME DIIB');
+                    const body = encodeURIComponent('الاسم: ' + name + '\nالبريد: ' + email + '\n\n' + message);
+
+                    // give visible feedback and then attempt to open mail client
+                    status.textContent = 'جارٍ فتح تطبيق البريد... إذا لم يفتح، استخدم الرابط اليدوي أدناه.';
+                    // Manual mailto link shown after a short delay if nothing happened
+                    setTimeout(()=>{
+                        // if still on the page, show manual link created via DOM (more robust than innerHTML)
+                        if(document.visibilityState !== 'hidden'){
+                            status.textContent = 'لم يتم فتح تطبيق البريد؟ ';
+                            const a = document.createElement('a');
+                            a.href = `mailto:adiibamiin@gmail.com?subject=${subject}&body=${body}`;
+                            a.textContent = 'اضغط هنا لإرسال الرسالة يدوياً';
+                            a.id = 'contact-manual-mailto';
+                            a.style.color = 'var(--accent)';
+                            a.style.textDecoration = 'underline';
+                            // ensure click forces navigation even if browser blocks default behavior
+                            a.addEventListener('click', function(ev){
+                                ev.preventDefault();
+                                try{ window.location.href = a.href; } catch(e){
+                                    // last-resort: show email address
+                                    status.textContent = 'تعذر فتح تطبيق البريد. الرجاء إرسال الرسالة إلى: adiibamiin@gmail.com';
+                                }
+                            });
+                            status.appendChild(a);
+                        }
+                    }, 1200);
+
+                    try{
+                        window.location.href = `mailto:adiibamiin@gmail.com?subject=${subject}&body=${body}`;
+                    }catch(e){
+                        // in case navigation is blocked; keep the manual link visible
+                        status.textContent = 'تعذر فتح تطبيق البريد. الرجاء إرسال الرسالة إلى: adiibamiin@gmail.com';
+                    }
+                    return;
+                }
+
+                // disable button while sending
+                sendBtn.setAttribute('disabled','true');
+                sendBtn.textContent = 'جارٍ الإرسال...';
+
+                // send via EmailJS
+                // If you created a template that expects name, email, message, these will be sent
+                emailjs.sendForm(EMAILJS_SERVICE_ID, EMAILJS_TEMPLATE_ID, '#contact-form')
+                    .then(function(){
+                        status.textContent = 'تم إرسال الرسالة بنجاح.';
+                        form.reset();
+                    }, function(err){
+                        status.textContent = 'حدث خطأ أثناء الإرسال. الرجاء المحاولة لاحقًا.';
+                        console.error('EmailJS error', err);
+                    }).finally(()=>{
+                        sendBtn.removeAttribute('disabled');
+                        sendBtn.textContent = 'إرسال';
+                    });
+            });
+        })();
+    </script>
+</body>
+</html>

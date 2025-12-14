@@ -1,0 +1,16 @@
+{
+  "name": "ANIME DIIB",
+  "short_name": "ANIME DIIB",
+  "description": "تطبيق عرض الأنمي الخفيف — ANIME DIIB",
+  "start_url": "./index.html",
+  "display": "standalone",
+  "background_color": "#071021",
+  "theme_color": "#071021",
+  "icons": [
+    {
+      "src": "assets/icons/favicon.svg",
+      "sizes": "64x64",
+      "type": "image/svg+xml"
+    }
+  ]
+}
