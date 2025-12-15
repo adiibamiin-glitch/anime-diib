@@ -214,5 +214,4 @@ input,textarea,button,a{font-size:1rem}
   .hero-media img{max-height:42vh}
 }
 
-
 @media (prefers-reduced-motion:reduce){*{transition:none!important}}

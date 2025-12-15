@@ -195,6 +195,23 @@
                 function startDownload(url, progressEl){
                     const isAndroid = /Android/i.test(navigator.userAgent || navigator.platform);
 
+                    // If the URL is hosted on known direct-download providers (Google Drive, Dropbox, etc.)
+                    // prefer direct navigation so the browser handles the download immediately.
+                    try{
+                        const directHosts = ['drive.google.com','dropbox.com','dl.dropboxusercontent.com','googleusercontent.com'];
+                        const isDirectHost = directHosts.some(h => url.includes(h));
+                        const hasExportParam = /export=download/i.test(url);
+                        if(isDirectHost || hasExportParam){
+                            const hdr = document.getElementById('header-download-progress');
+                            const main = document.getElementById('download-progress');
+                            const targets = [progressEl, hdr, main].filter(Boolean);
+                            targets.forEach(t=>{ t.classList.remove('visually-hidden'); t.setAttribute('aria-hidden','false'); const lbl = t.querySelector('.progress-label, .header-progress-label'); if(lbl) lbl.textContent='جاري التحميل...'; });
+                            // Start browser download/navigation immediately
+                            window.location.assign(url);
+                            return;
+                        }
+                    }catch(e){ console.warn('Direct-host detection failed, continuing to programmatic download', e); }
+
                     // If this is an APK and we're on Android, prefer letting the browser handle the download
                     // directly (avoids blob URL issues that can block installation on some Android browsers).
                     if(isAndroid && /\.apk($|\?)/i.test(url)){
@@ -447,7 +464,7 @@
                 const closeBtn = document.getElementById('sendlink-close');
 
                 function getDownloadUrl(){
-                    return new URL('downloads/ANIME_DIIB.apk', location.href).href;
+                    return 'https://drive.google.com/uc?export=download&id=13PApSNTBzQoWTvaN3M87yrkBo9n9UTU9';
                 }
 
                 if(sendBtn){
@@ -485,10 +502,5 @@
                 if(closeBtn){ closeBtn.addEventListener('click', ()=>{ modal.classList.add('visually-hidden'); modal.setAttribute('aria-hidden','true'); qrContainer.style.display='none'; }); }
             })();
         </script>
-</body>
-
+    </body>
 </html>
-
-
-
-
