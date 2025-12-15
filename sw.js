@@ -5,13 +5,11 @@ const ASSETS = [
   '/contact.html',
   '/privacy.html',
   '/style.css',
-  '/assets/icons/favicon.svg',
-  '/assets/icons/favicon.png',
-  '/assets/images/logo.svg',
-  '/assets/images/logo.png',
-  '/assets/images/screen1.jpg',
-  '/assets/images/screen2.jpg',
-  '/assets/images/screen3.jpg'
+  '/favicon.png',
+  '/logo.png',
+  '/screen1.jpg',
+  '/screen2.jpg',
+  '/screen3.jpg'
 ];
 
 self.addEventListener('install', (event) => {
@@ -35,3 +33,4 @@ self.addEventListener('fetch', (event) => {
     caches.match(event.request).then(resp => resp || fetch(event.request))
   );
 });
+
