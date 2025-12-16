@@ -12,6 +12,7 @@
     <link rel="icon" href="favicon.png" />
     <meta name="theme-color" content="#071021" />
     <link rel="manifest" href="manifest.json" />
+        
     <script type="application/ld+json">
     {
         "@context": "http://schema.org",
@@ -20,7 +21,11 @@
         "url": "./",
         "applicationCategory": "Entertainment",
         "operatingSystem": "Android",
-        "offers": {"@type": "Offer","price":"0","url":"https://1drv.ms/u/c/846dc043d4c4fd3b/IQDAFJufykDESbGP7xjBJNlnAertVqisG-lpKhxdsHWYqSY?e=viZ5PV"}
+        "offers": {
+            "@type": "Offer",
+            "price": "0",
+            "url": "gs://adiibme.firebasestorage.app/anime-diib.apk"
+        }
     }
     </script>
 </head>
@@ -36,12 +41,12 @@
             </div>
             <!-- Compact aggregated rating displayed in header (read-only) -->
             <div class="header-rating" id="header-rating" aria-hidden="false" title="متوسط تقييم التطبيق">
-                <div class="hdr-rating-average" id="hdr-rating-average">0.0</div>
-                <div class="hdr-rating-stars" id="hdr-rating-stars">☆☆☆☆☆</div>
+                <div class="hdr-rating-average" id="hdr-rating-average">4.4</div>
+                <div class="hdr-rating-stars" id="hdr-rating-stars">★★★★☆</div>
             </div>
             <nav class="nav" role="navigation" aria-label="القوائم الرئيسية">
                 <a class="nav-link" href="contact.html">تواصل</a>
-                <button id="download-nav" class="btn btn-ghost" data-href="https://1drv.ms/u/c/846dc043d4c4fd3b/IQDAFJufykDESbGP7xjBJNlnAertVqisG-lpKhxdsHWYqSY?e=viZ5PV" aria-label="تحميل ANIME DIIB من الهيدر">تحميل</button>
+                    <button id="download-nav" class="btn btn-ghost" data-href="gs://adiibme.firebasestorage.app/anime-diib.apk" aria-label="تحميل ANIME DIIB من الهيدر">تحميل</button>
                 <!-- Header compact progress (hidden until active) -->
                 <div id="header-download-progress" class="header-progress-wrap visually-hidden" aria-hidden="true">
                     <div class="header-progress-bar" role="progressbar" aria-valuemin="0" aria-valuemax="100" style="width:0%"></div>
@@ -58,7 +63,7 @@
                       <h1 class="gradient-text">ANIME DIIB</h1>
                     <p class="lead">هو تطبيق تواصل ومشاهدة الانمي — تجربة مثيرةّ،مع مفاجأت اخرى داخل التطبيق .</p>
                     <div class="hero-ctas">
-                        <button id="download" class="btn btn-primary" data-href="https://1drv.ms/u/c/846dc043d4c4fd3b/IQDAFJufykDESbGP7xjBJNlnAertVqisG-lpKhxdsHWYqSY?e=viZ5PV" aria-label="تحميل تطبيق ANIME DIIB الآن">تحميل الآن</button>
+                            <button id="download" class="btn btn-primary" data-href="gs://adiibme.firebasestorage.app/anime-diib.apk" aria-label="تحميل تطبيق ANIME DIIB الآن">تحميل الآن</button>
                         <!-- send-link removed per request -->
                         <button id="pwa-install" class="btn btn-outline visually-hidden" aria-hidden="true">تثبيت التطبيق</button>
                         <a class="btn btn-outline" href="#features" aria-label="اطلع على مزايا التطبيق">المزايا</a>
@@ -68,6 +73,7 @@
                                                     <div class="progress-label">0%</div>
                                                 </div>
                     </div>
+                    
                                         <ul class="quick-features">
                                                 <li>خفيف على الجهاز</li>
                                                 <li>دعم RTL وواجهة عربية</li>
@@ -108,6 +114,7 @@
                     <h3>واجهة عرض أنيقة</h3>
                     <p>قوائم انيقة وتصنيف واضح للحلقات والموسم.</p>
                 </article>
+                
                 <article class="feature">
                     <div class="icon">⚡</div>
                     <h3>أداء سريع</h3>
@@ -143,7 +150,7 @@
                         <p>حمّل ANIME DIIB الآن وابدأ متابعة مسلسلاتك المفضلة.</p>
                     </div>
                     <div style="display:flex;gap:12px;align-items:center">
-                        <button id="download-cta" class="btn btn-primary" data-href="https://1drv.ms/u/c/846dc043d4c4fd3b/IQDAFJufykDESbGP7xjBJNlnAertVqisG-lpKhxdsHWYqSY?e=viZ5PV">تحميل</button>
+                        <button id="download-cta" class="btn btn-primary" data-href="gs://adiibme.firebasestorage.app/anime-diib.apk">تحميل</button>
                         <a class="btn btn-outline" href="#features">المزايا</a>
                     </div>
                 </div>
@@ -161,6 +168,7 @@
                 <div class="footer-note">إصدار تجريبي — استبدل ملف التحميل بالنسخة النهائية عند توفرها</div>
             </div>
         </div>
+        
     </footer>
 
     <script>
@@ -198,16 +206,42 @@
                     // If the URL is hosted on known direct-download providers (Google Drive, Dropbox, etc.)
                     // prefer direct navigation so the browser handles the download immediately.
                     try{
-                        const directHosts = ['drive.google.com','dropbox.com','dl.dropboxusercontent.com','googleusercontent.com'];
+                        const directHosts = ['drive.google.com','onedrive.live.com','1drv.ms','dropbox.com','dl.dropboxusercontent.com','googleusercontent.com'];
                         const isDirectHost = directHosts.some(h => url.includes(h));
                         const hasExportParam = /export=download/i.test(url);
+                        // Handle gs:// firebase storage URIs by converting to https download endpoint
+                        if(/^gs:\/\//i.test(url)){
+                            // gs://bucket/path -> https://firebasestorage.googleapis.com/v0/b/{bucket}/o/{encodedPath}?alt=media
+                            try{
+                                const parts = url.replace(/^gs:\/\//i,'').split('/');
+                                const bucket = parts.shift();
+                                const objectPath = parts.join('/');
+                                const encoded = encodeURIComponent(objectPath);
+                                const fsUrl = 'https://firebasestorage.googleapis.com/v0/b/' + bucket + '/o/' + encoded + '?alt=media';
+                                try{ window.location.assign(fsUrl); }
+                                catch(_){ try{ const a=document.createElement('a'); a.href=fsUrl; a.target='_blank'; a.rel='noopener noreferrer'; document.body.appendChild(a); a.click(); a.remove(); }catch(e){console.warn('gs navigation failed',e);} }
+                                return;
+                            }catch(e){ console.warn('gs:// conversion failed', e); }
+                        }
                         if(isDirectHost || hasExportParam){
                             const hdr = document.getElementById('header-download-progress');
                             const main = document.getElementById('download-progress');
                             const targets = [progressEl, hdr, main].filter(Boolean);
                             targets.forEach(t=>{ t.classList.remove('visually-hidden'); t.setAttribute('aria-hidden','false'); const lbl = t.querySelector('.progress-label, .header-progress-label'); if(lbl) lbl.textContent='جاري التحميل...'; });
-                            // Start browser download/navigation immediately
-                            window.location.assign(url);
+                            // OneDrive special handling: convert shared link to OneDrive shares API URL
+                            try{
+                                if(/onedrive\.live\.com|1drv\.ms/i.test(url)){
+                                    function base64UrlEncode(str){ const b = btoa(unescape(encodeURIComponent(str))); return b.replace(/\+/g,'-').replace(/\//g,'_').replace(/=+$/,''); }
+                                    const encoded = base64UrlEncode(url);
+                                    const apiUrl = 'https://api.onedrive.com/v1.0/shares/u!' + encoded + '/root/content';
+                                    window.location.assign(apiUrl);
+                                    return;
+                                }
+                            }catch(e){ console.warn('OneDrive conversion failed', e); }
+
+                            // Start browser download/navigation immediately for other direct hosts
+                            try{ window.location.assign(url); }
+                            catch(_){ try{ const a=document.createElement('a'); a.href=url; a.target='_blank'; a.rel='noopener noreferrer'; document.body.appendChild(a); a.click(); a.remove(); }catch(e){console.warn('direct-host navigation failed',e);} }
                             return;
                         }
                     }catch(e){ console.warn('Direct-host detection failed, continuing to programmatic download', e); }
@@ -224,8 +258,8 @@
                             // Use location.assign to start the browser download flow
                             window.location.assign(url);
                         }catch(e){
-                            console.error('Direct navigation failed, falling back to programmatic download', e);
-                            // fallback to programmatic fetch-based download
+                            try{ const a=document.createElement('a'); a.href=url; a.target='_blank'; a.rel='noopener noreferrer'; document.body.appendChild(a); a.click(); a.remove(); }
+                            catch(err){ console.error('Direct navigation failed, and anchor fallback failed', err); }
                         }
                         return;
                     }
@@ -304,12 +338,35 @@
                 const progressWrap = document.getElementById('download-progress');
                 const headerProgress = document.getElementById('header-download-progress');
                 const downloadEls = document.querySelectorAll('[data-href]');
+                function navigateTo(url){
+                    try{ window.location.assign(url); }
+                    catch(_){
+                        try{
+                            const a = document.createElement('a');
+                            a.href = url;
+                            a.target = '_blank';
+                            a.rel = 'noopener noreferrer';
+                            document.body.appendChild(a);
+                            a.click();
+                            a.remove();
+                        }catch(e){ console.error('Navigation fallback failed', e); }
+                    }
+                }
+
                 downloadEls.forEach(btn=>{
                     if(!btn) return;
                     btn.addEventListener('click', (e)=>{
-                        e.preventDefault();
                         const url = btn.dataset.href || btn.getAttribute('data-href') || btn.getAttribute('href');
                         if(!url) return alert('رابط التحميل غير موجود');
+
+                        // If this is a Google Drive direct-download URL, navigate immediately (avoid programmatic blob)
+                        if(/drive\.google\.com\/uc\?export=download|googleusercontent\.com/i.test(url)){
+                            navigateTo(url);
+                            return;
+                        }
+
+                        // preventDefault for non-direct downloads handled via JS
+                        e.preventDefault();
 
                         // Prefer explicit data-progress-target, else choose header progress for header, else main progress
                         let progressEl = null;
@@ -326,6 +383,7 @@
                 });
             })();
         </script>
+        
 
         <script>
                 // Rating widget (uses the static `#rating-block` in the hero)
@@ -354,14 +412,12 @@
                     const avg = store.count ? (store.sum / store.count) : 0;
                     const avgText = store.count ? (Math.round(avg*10)/10) : '0.0';
                     avgEl.textContent = avgText;
-                    // update header if present
-                    if(hdrAvg) hdrAvg.textContent = avgText;
-
                     // stars textual display (rounded)
                     const rounded = Math.round(avg);
                     const stars = Array.from({length:5}).map((_,i)=> i < rounded ? '★' : '☆').join('');
                     starsText.textContent = stars;
-                    if(hdrStars) hdrStars.textContent = stars;
+                    // Keep header rating static at 4.4 (do not overwrite)
+                    if(hdrStars) hdrStars.textContent = '★★★★☆';
 
                     countEl.textContent = store.count ? (store.count + ' تقييم') : 'لم يتم التقييم بعد';
                     // mark user selection
@@ -464,7 +520,7 @@
                 const closeBtn = document.getElementById('sendlink-close');
 
                 function getDownloadUrl(){
-                    return 'https://drive.google.com/uc?export=download&id=13PApSNTBzQoWTvaN3M87yrkBo9n9UTU9';
+                    return 'https://firebasestorage.googleapis.com/v0/b/adiibme.firebasestorage.app/o/anime-diib.apk?alt=media';
                 }
 
                 if(sendBtn){
