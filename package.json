@@ -1,0 +1,14 @@
+{
+  "name": "diib-local-server",
+  "version": "1.0.0",
+  "description": "Static site + proxy for DIIB to allow in-site video playback",
+  "main": "server.js",
+  "scripts": {
+    "start": "node server.js"
+  },
+  "dependencies": {
+    "cors": "^2.8.5",
+    "express": "^4.18.2",
+    "node-fetch": "^2.6.7"
+  }
+}

@@ -1,0 +1,52 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width,initial-scale=1" />
+    <title>الأفلام — ANIME DIIB</title>
+    <link rel="stylesheet" href="style.css" />
+</head>
+<body>
+    <header class="site-header">
+        <div class="container header-inner">
+            <a class="nav-link" href="index.html">الرئيسية</a>
+            <a class="nav-link" href="shows.html">المسلسلات</a>
+        </div>
+    </header>
+
+    <main class="container">
+        <h1 class="page-title">الأفلام</h1>
+        <div id="movies-grid" class="grid"></div>
+    </main>
+
+    <script src="data.js"></script>
+    <script>
+    (function(){
+        const grid = document.getElementById('movies-grid');
+        function render(){
+            const catalog = DIIB.getCatalog();
+            const movies = catalog.movies || [];
+            grid.innerHTML = '';
+            movies.forEach(m=>{
+                const a = document.createElement('article'); a.className='card';
+                a.innerHTML = `
+                    <a class="card-link" href="player.html?src=${encodeURIComponent(m.src)}&title=${encodeURIComponent(m.title)}&poster=${encodeURIComponent(m.poster||'')}">
+                        <div class="thumb">
+                            <img src="${m.poster||'screen1.jpg'}" alt="${m.title}" loading="lazy" />
+                        </div>
+                        <h3 title="${m.title}">${m.title}</h3>
+                    </a>
+                `;
+                grid.appendChild(a);
+            });
+        }
+        render();
+        window.addEventListener('storage', render);
+    })();
+    </script>
+
+    <footer class="site-footer">
+        <div class="container">© ANIME DIIB</div>
+    </footer>
+</body>
+</html>

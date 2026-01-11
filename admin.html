@@ -1,0 +1,309 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width,initial-scale=1" />
+    <title>لوحة إدارة المحتوى — ANIME DIIB</title>
+    <link rel="stylesheet" href="style.css" />
+</head>
+<body>
+    <header class="site-header">
+        <div class="container header-inner">
+            <a class="nav-link" href="index.html">الرئيسية</a>
+            <a class="nav-link" href="movies.html">الأفلام</a>
+            <a class="nav-link" href="shows.html">المسلسلات</a>
+        </div>
+    </header>
+
+    <!-- admin locked by default; requires password unlock to show main UI -->
+    <div id="admin-lock-wrap" class="admin-lock-backdrop" style="display:flex">
+        <div class="admin-lock" role="dialog" aria-modal="true">
+            <h3>دخول لوحة النشر</h3>
+            <p class="muted">أدخل كلمة المرور للوصول إلى واجهة إدارة المحتوى.</p>
+            <input id="admin-pass" type="password" placeholder="كلمة المرور" aria-label="كلمة المرور" />
+            <div style="display:flex;gap:8px;justify-content:center;margin-top:8px">
+                <button type="button" id="admin-unlock" class="btn btn-primary" onclick="window.__diib_admin_unlock && window.__diib_admin_unlock()">دخول</button>
+                <button type="button" id="admin-cancel" class="btn btn-ghost">إلغاء</button>
+            </div>
+            <p class="muted small" style="margin-top:8px">ملاحظة: هذا لا يعد بديلاً للأمن على الخادم. عدّل كلمة المرور في الملف قبل الاستخدام.</p>
+        </div>
+    </div>
+
+    <main id="admin-main" class="container" style="display:none">
+        <h1 class="page-title">لوحة إدارة المحتوى</h1>
+
+        <section style="margin-bottom:18px">
+            <h2>أضف فيلم جديد</h2>
+            <div style="display:flex;gap:8px;flex-wrap:wrap;align-items:center">
+                <input id="movie-title" placeholder="عنوان الفيلم" />
+                <input id="movie-poster" placeholder="رابط الصورة المصغرة" />
+                <input id="movie-src" placeholder="رابط الفيديو (mp4 أو m3u8 أو iframe)" />
+                <button type="button" id="add-movie" class="btn btn-primary">أضف فيلم</button>
+            </div>
+        </section>
+
+        <section style="margin-bottom:18px">
+            <h2>أضف مسلسل جديد</h2>
+            <div style="display:flex;gap:8px;flex-wrap:wrap;align-items:center">
+                <input id="show-title" placeholder="عنوان المسلسل" />
+                <input id="show-poster" placeholder="رابط الصورة المصغرة" />
+                <button type="button" id="add-show" class="btn btn-primary">أضف المسلسل</button>
+            </div>
+            <div id="new-show-actions" style="margin-top:12px"></div>
+        </section>
+
+        <section>
+            <h2>أدوات سريعة</h2>
+            <div class="admin-tools">
+                <button type="button" id="export-json" class="btn btn-outline">تصدير JSON</button>
+                <button type="button" id="import-json-btn" class="btn btn-outline">استيراد JSON</button>
+                <input id="import-json" type="file" accept="application/json" style="display:none" />
+                <button type="button" id="clear-catalog" class="btn btn-ghost">مسح الكاتالوج</button>
+            </div>
+        </section>
+
+        <section>
+            <h2>قوائم حالية</h2>
+            <div id="catalog-list"></div>
+        </section>
+    </main>
+
+    <script src="data.js"></script>
+    <script>
+    (function(){
+        const ADMIN_KEY = 'diib...ANIME2';
+        const lockWrap = document.getElementById('admin-lock-wrap');
+        const unlockBtn = document.getElementById('admin-unlock');
+        const cancelBtn = document.getElementById('admin-cancel');
+        const passInput = document.getElementById('admin-pass');
+        const adminMain = document.getElementById('admin-main');
+
+        function unlock(){
+            if(passInput.value === ADMIN_KEY){ lockWrap.style.display='none'; adminMain.style.display='block'; initAdmin(); }
+            else { alert('كلمة المرور غير صحيحة'); }
+        }
+        window.__diib_admin_unlock = unlock;
+        unlockBtn.addEventListener('click', unlock);
+        passInput.addEventListener('keydown', (e)=>{ if(e.key === 'Enter') unlock(); });
+        cancelBtn.addEventListener('click', ()=>{ passInput.value=''; });
+
+        function initAdmin(){
+            if(!window.DIIB){ alert('خطأ: واجهة التخزين غير متاحة (ملف data.js مفقود أو فشل التحميل).'); return; }
+            const MT=document.getElementById('movie-title');
+            const MP=document.getElementById('movie-poster');
+            const MS=document.getElementById('movie-src');
+            const AM=document.getElementById('add-movie');
+            const ST=document.getElementById('show-title');
+            const SP=document.getElementById('show-poster');
+            const AS=document.getElementById('add-show');
+            const newShowActions=document.getElementById('new-show-actions');
+            const catalogList = document.getElementById('catalog-list');
+            const exportBtn = document.getElementById('export-json');
+            const importBtn = document.getElementById('import-json-btn');
+            const importInput = document.getElementById('import-json');
+            const clearBtn = document.getElementById('clear-catalog');
+
+            function escapeHtml(str){ return (str+'').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;').replace(/'/g,'&#039;'); }
+
+            function render(){
+                const c = DIIB.getCatalog();
+                catalogList.innerHTML = '';
+                const movies = c.movies || [];
+                const shows = c.shows || [];
+
+                const mvWrap = document.createElement('div'); mvWrap.innerHTML = '<h3>الأفلام</h3>';
+                if(movies.length === 0) mvWrap.innerHTML += '<div class="muted">لا توجد أفلام بعد.</div>';
+                movies.forEach(m=>{
+                    const el = document.createElement('div'); el.style.margin='8px 0';
+                    el.innerHTML = `${escapeHtml(m.title)} — <button type="button" class="btn btn-outline edit-movie" data-id="${m.id}">تعديل</button> — <button type="button" data-id="${m.id}" data-type="movie" class="btn btn-ghost">حذف</button>`;
+                    mvWrap.appendChild(el);
+                });
+
+                const shWrap = document.createElement('div'); shWrap.innerHTML = '<h3>المسلسلات</h3>';
+                if(shows.length === 0) shWrap.innerHTML += '<div class="muted">لا توجد مسلسلات بعد.</div>';
+                shows.forEach(s=>{
+                    const el = document.createElement('div'); el.style.margin='8px 0';
+                    el.innerHTML = `${escapeHtml(s.title)} — <button type="button" class="btn btn-outline edit-show" data-id="${s.id}">تعديل</button> — <button type="button" data-id="${s.id}" data-type="show" class="btn btn-ghost">حذف</button>`;
+                    shWrap.appendChild(el);
+                });
+
+                catalogList.appendChild(mvWrap);
+                catalogList.appendChild(shWrap);
+
+                // attach handlers
+                catalogList.querySelectorAll('button.btn-ghost').forEach(b=>{ b.addEventListener('click', ()=>{ const id=b.dataset.id, type=b.dataset.type; if(confirm('هل تريد الحذف؟')){ DIIB.deleteItem(type,id); render(); } }); });
+                catalogList.querySelectorAll('button.edit-movie').forEach(b=>{ b.addEventListener('click', ()=> openMovieEditor(b.dataset.id)); });
+                catalogList.querySelectorAll('button.edit-show').forEach(b=>{ b.addEventListener('click', ()=> openShowEditor(b.dataset.id)); });
+            }
+
+            function openMovieEditor(id){
+                const c = DIIB.getCatalog(); const movie = (c.movies||[]).find(x=>x.id===id); if(!movie) return alert('الفيلم غير موجود');
+                // remove any existing forms
+                const existing = document.querySelector('.edit-form'); if(existing) existing.remove();
+                const form = document.createElement('div'); form.className='edit-form'; form.style.margin='8px 0';
+                form.innerHTML = `
+                    <div style="display:flex;gap:8px;flex-wrap:wrap;align-items:center">
+                        <input class="ef-title" value="${escapeHtml(movie.title)}" placeholder="العنوان" />
+                        <input class="ef-poster" value="${escapeHtml(movie.poster||'')}" placeholder="رابط الصورة" />
+                        <input class="ef-src" value="${escapeHtml(movie.src||'')}" placeholder="رابط الفيديو" />
+                        <button type="button" class="btn btn-primary ef-save">حفظ</button>
+                        <button type="button" class="btn btn-ghost ef-cancel">إلغاء</button>
+                    </div>
+                `;
+                // append after the movie's list item
+                const btn = document.querySelector(`button.edit-movie[data-id="${id}"]`);
+                btn.parentElement.appendChild(form);
+                form.querySelector('.ef-cancel').addEventListener('click', ()=> form.remove());
+                form.querySelector('.ef-save').addEventListener('click', ()=>{
+                    const t = form.querySelector('.ef-title').value.trim();
+                    const p = form.querySelector('.ef-poster').value.trim();
+                    const s = form.querySelector('.ef-src').value.trim();
+                    if(!t || !s) return alert('الرجاء إدخال العنوان ورابط الفيديو');
+                    DIIB.updateMovie(id,{title:t,poster:p,src:s}); render();
+                });
+            }
+
+            function openShowEditor(id){
+                let c = DIIB.getCatalog(); let show = (c.shows||[]).find(x=>x.id===id); if(!show) return alert('المسلسل غير موجود');
+                const existing = document.querySelector('.edit-show-form'); if(existing) existing.remove();
+                const btn = document.querySelector(`button.edit-show[data-id="${id}"]`);
+                const form = document.createElement('div'); form.className='edit-show-form'; form.style.margin='8px 0';
+                form.innerHTML = `
+                    <div style="display:flex;gap:8px;flex-wrap:wrap;align-items:center">
+                        <input class="sf-title" value="${escapeHtml(show.title)}" placeholder="عنوان المسلسل" />
+                        <input class="sf-poster" value="${escapeHtml(show.poster||'')}" placeholder="رابط الصورة" />
+                        <button type="button" class="btn btn-primary sf-save">حفظ</button>
+                        <button type="button" class="btn btn-ghost sf-cancel">إلغاء</button>
+                    </div>
+                    <div style="margin-top:10px"><strong>الحلقات</strong></div>
+                    <div class="episodes-list" style="margin-top:8px"></div>
+                    <div style="display:flex;gap:8px;flex-wrap:wrap;align-items:center;margin-top:8px">
+                        <input class="new-ep-title" placeholder="عنوان الحلقة" />
+                        <input class="new-ep-num" placeholder="رقم الحلقة" />
+                        <input class="new-ep-poster" placeholder="رابط الصورة" />
+                        <input class="new-ep-src" placeholder="رابط الفيديو" />
+                        <button type="button" class="btn btn-primary add-ep">أضف حلقة</button>
+                    </div>
+                `;
+                btn.parentElement.appendChild(form);
+
+                const episodesList = form.querySelector('.episodes-list');
+                function renderEpisodes(){
+                    episodesList.innerHTML = '';
+                    show = DIIB.getCatalog().shows.find(x=>x.id===show.id) || show;
+                    (show.episodes||[]).forEach(ep=>{
+                        const el = document.createElement('div'); el.style.margin='6px 0';
+                        el.innerHTML = `${escapeHtml(ep.title)} — حلقة ${ep.episode||''} — <button type="button" class="btn btn-outline edit-ep" data-epid="${ep.id}">تعديل</button> — <button type="button" class="btn btn-ghost del-ep" data-epid="${ep.id}">حذف</button>`;
+                        episodesList.appendChild(el);
+                    });
+                    episodesList.querySelectorAll('.edit-ep').forEach(btn=>{ btn.addEventListener('click', ()=>{
+                        const epId = btn.dataset.epid; const ep = (show.episodes||[]).find(x=>x.id===epId); if(!ep) return;
+                        const par = btn.parentElement; const existing = par.querySelector('.ep-edit-form'); if(existing){ existing.remove(); return; }
+                        const ef = document.createElement('div'); ef.className='ep-edit-form'; ef.style.marginTop='6px';
+                        ef.innerHTML = `
+                            <div style="display:flex;gap:8px;flex-wrap:wrap;align-items:center">
+                                <input class="ep-title" value="${escapeHtml(ep.title)}" />
+                                <input class="ep-num" value="${escapeHtml(ep.episode||'')}" placeholder="رقم الحلقة" />
+                                <input class="ep-poster" value="${escapeHtml(ep.poster||'')}" placeholder="رابط الصورة" />
+                                <input class="ep-src" value="${escapeHtml(ep.src||'')}" placeholder="رابط الفيديو" />
+                                <button type="button" class="btn btn-primary ep-save">حفظ</button>
+                                <button type="button" class="btn btn-ghost ep-cancel">إلغاء</button>
+                            </div>
+                        `;
+                        par.appendChild(ef);
+                        ef.querySelector('.ep-cancel').addEventListener('click', ()=> ef.remove());
+                        ef.querySelector('.ep-save').addEventListener('click', ()=>{
+                            const t = ef.querySelector('.ep-title').value.trim();
+                            const num = parseInt(ef.querySelector('.ep-num').value||'0',10);
+                            const p = ef.querySelector('.ep-poster').value.trim();
+                            const s = ef.querySelector('.ep-src').value.trim();
+                            if(!s) return alert('أدخل رابط الفيديو');
+                            DIIB.updateEpisode(show.id, epId, {title:t, episode:num, poster:p, src:s}); renderEpisodes(); render();
+                        });
+                    }); });
+                    episodesList.querySelectorAll('.del-ep').forEach(btn=>{ btn.addEventListener('click', ()=>{
+                        if(!confirm('حذف الحلقة؟')) return; const epId = btn.dataset.epid; DIIB.deleteEpisode(show.id, epId); renderEpisodes(); render();
+                    }); });
+                }
+
+                form.querySelector('.sf-cancel').addEventListener('click', ()=> form.remove());
+                form.querySelector('.sf-save').addEventListener('click', ()=>{
+                    const t = form.querySelector('.sf-title').value.trim();
+                    const p = form.querySelector('.sf-poster').value.trim();
+                    if(!t) return alert('أدخل عنوان المسلسل');
+                    DIIB.updateShow(show.id,{title:t, poster:p}); render(); form.remove();
+                });
+
+                form.querySelector('.add-ep').addEventListener('click', ()=>{
+                    const t = form.querySelector('.new-ep-title').value.trim();
+                    const num = parseInt(form.querySelector('.new-ep-num').value||'0',10);
+                    const p = form.querySelector('.new-ep-poster').value.trim();
+                    const s = form.querySelector('.new-ep-src').value.trim();
+                    if(!s) return alert('أدخل رابط الفيديو');
+                    DIIB.addEpisode(show.id,{title:t||('حلقة '+(num||'')), episode:num, poster:p, src:s}); renderEpisodes(); render();
+                });
+
+                renderEpisodes();
+            }
+
+            function normalizeInput(s){ return (s||'').replace(/\u00A0/g,' ').replace(/[\u200B\u200C\u200D\uFEFF]/g,'').trim(); }
+
+            AM.addEventListener('click', ()=>{
+                const rawTitle = MT.value;
+                const rawPoster = MP.value;
+                const rawSrc = MS.value;
+                const title = normalizeInput(rawTitle);
+                const poster = normalizeInput(rawPoster);
+                const src = normalizeInput(rawSrc);
+                console.debug('add-movie values', {rawTitle, rawPoster, rawSrc, title, poster, src, titleLen: title.length, srcLen: src.length});
+                if(!title || !src){ alert('الرجاء إدخال العنوان ورابط الفيديو'); return; }
+                try{ DIIB.addMovie({title,poster,src}); MT.value=''; MP.value=''; MS.value=''; render(); }
+                catch(err){ console.error('addMovie failed', err); alert('فشل إضافة الفيلم: '+(err.message||err)); }
+            });
+
+            AS.addEventListener('click', ()=>{
+                const title=ST.value.trim(), poster=SP.value.trim();
+                if(!title){ alert('أدخل عنوان المسلسل'); return; }
+                try{ const s = DIIB.addShow({title,poster}); ST.value=''; SP.value=''; render();
+                    newShowActions.innerHTML = `<div>تم إنشاء المسلسل <strong>${escapeHtml(s.title)}</strong>. أضف حلقة الآن:</div>
+                    <div style="display:flex;gap:8px;flex-wrap:wrap;margin-top:8px">
+                        <input id="ep-title" placeholder="عنوان الحلقة" />
+                        <input id="ep-number" placeholder="رقم الحلقة" />
+                        <input id="ep-poster" placeholder="رابط الصورة" />
+                        <input id="ep-src" placeholder="رابط الفيديو" />
+                        <button type="button" id="add-ep" class="btn btn-primary">أضف حلقة</button>
+                    </div>`;
+                    document.getElementById('add-ep').addEventListener('click', ()=>{
+                        const et = document.getElementById('ep-title').value.trim();
+                        const en = parseInt(document.getElementById('ep-number').value||'0',10);
+                        const ep = document.getElementById('ep-poster').value.trim();
+                        const src = document.getElementById('ep-src').value.trim();
+                        if(!src){ alert('أدخل رابط الفيديو'); return; }
+                        try{ DIIB.addEpisode(s.id,{title:et||('حلقة '+(en||'')),episode:en,src,poster:ep});
+                            document.getElementById('ep-title').value=''; document.getElementById('ep-number').value=''; document.getElementById('ep-poster').value=''; document.getElementById('ep-src').value='';
+                            render();
+                        }catch(err){ console.error('addEpisode failed',err); alert('فشل إضافة الحلقة: '+(err.message||err)); }
+                    });
+                }catch(err){ console.error('addShow failed', err); alert('فشل إنشاء المسلسل: '+(err.message||err)); }
+            });
+
+            // export/import/clear
+            exportBtn.addEventListener('click', ()=>{
+                const data = JSON.stringify(DIIB.getCatalog(), null, 2);
+                const blob = new Blob([data], {type:'application/json'});
+                const a = document.createElement('a'); a.href = URL.createObjectURL(blob); a.download = 'catalog.json'; document.body.appendChild(a); a.click(); a.remove();
+            });
+            importBtn.addEventListener('click', ()=> importInput.click());
+            importInput.addEventListener('change', (e)=>{
+                const f = e.target.files[0]; if(!f) return; const r = new FileReader(); r.onload = ()=>{
+                    try{ const obj = JSON.parse(r.result); localStorage.setItem('diib_catalog_v1', JSON.stringify(obj)); alert('تم الاستيراد'); render(); }catch(err){ alert('ملف غير صالح'); }
+                }; r.readAsText(f);
+            });
+            clearBtn.addEventListener('click', ()=>{ if(confirm('مسح كل العناصر من الكاتالوج؟')){ localStorage.removeItem('diib_catalog_v1'); render(); } });
+
+            render();
+        }
+    })();
+    </script>
+</body>
+</html>
