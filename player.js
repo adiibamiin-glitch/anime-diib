@@ -27,7 +27,8 @@
     const lower = src.toLowerCase();
     const isM3u8 = lower.indexOf('.m3u8') !== -1;
     const isVideoFile = lower.match(/\.(mp4|webm|ogg)(\?|$)/);
-    // prefer using local proxy to avoid CORS restrictions when available
+    // prefer direct source first; fall back to proxy if necessary
+    const directSrc = src;
     const proxiedSrc = '/proxy?url=' + encodeURIComponent(src);
 
     if(isM3u8){
@@ -36,15 +37,23 @@
             hls.on(Hls.Events.ERROR, function(event, data){
                 console.warn('HLS error', data);
                 if(data && data.fatal){
+                    // try proxy fallback once
+                    if(!hls.__triedProxy){
+                        hls.__triedProxy = true;
+                        hls.loadSource(proxiedSrc);
+                        return;
+                    }
                     msg.textContent = 'فشل تشغيل البث (HLS). افتح المصدر في علامة جديدة.';
                 }
             });
-            // try proxied source first to avoid CORS
-            hls.loadSource(proxiedSrc);
+            // try direct source first
+            hls.loadSource(directSrc);
             hls.attachMedia(video);
             hls.on(Hls.Events.MANIFEST_PARSED, function(){ video.play().catch(()=>{}); });
         } else if(video.canPlayType('application/vnd.apple.mpegurl')){
-            video.src = proxiedSrc;
+            // try direct then proxy on error
+            video.src = directSrc;
+            video.addEventListener('error', function(){ if(!video.__triedProxy){ video.__triedProxy = true; video.src = proxiedSrc; } });
             video.addEventListener('loadedmetadata', ()=> video.play().catch(()=>{}));
         } else {
             // fallback to iframe if provided by server
@@ -54,12 +63,18 @@
             msg.textContent = 'يتم تشغيل المصدر داخل إطار (iframe).';
         }
     } else if(isVideoFile){
-        // use proxied URL to avoid CORS when possible
-        // ensure video doesn't expose download button
+        // try direct URL first; fall back to proxy on error
         try{ video.controlsList = 'nodownload'; }catch(e){}
-        video.src = proxiedSrc;
+        video.src = directSrc;
         video.addEventListener('loadedmetadata', ()=> video.play().catch(()=>{}));
         video.addEventListener('error', function(e){
+            console.warn('Video element error with direct src', e);
+            if(!video.__triedProxy){
+                video.__triedProxy = true;
+                video.src = proxiedSrc;
+                msg.textContent = 'محاولة تشغيل عبر الخادم الوسيط...';
+                return;
+            }
             console.error('Video element error', e);
             msg.textContent = 'فشل تشغيل الفيديو في المشغل. افتح المصدر في علامة جديدة.';
         });
