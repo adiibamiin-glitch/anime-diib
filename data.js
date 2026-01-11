@@ -26,7 +26,7 @@
                 episodes: [
                     { id: 'demo_show_1_ep1', title: 'الحلقة الأولى', episode: 1, src: 'https://k.top4top.io/m_3559oca3r1.mp4', poster: '' },
                     { id: 'demo_show_1_ep2', title: 'الحلقة الثانية', episode: 2, src: 'https://l.top4top.io/m_3559msle52.mp4', poster: '' },
-                    { id: 'demo_show_1_ep3', title: 'الحلقة الثالثة', episode: 3, src: '.https://a.top4top.io/m_3559whcm63.mp4', poster: '' }
+                    { id: 'demo_show_1_ep3', title: 'الحلقة الثالثة', episode: 3, src: 'https://a.top4top.io/m_3559whcm63.mp4', poster: '' }
 
                 ]
             }
